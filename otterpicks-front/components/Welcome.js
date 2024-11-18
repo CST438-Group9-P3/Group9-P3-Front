@@ -1,14 +1,27 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 
-const Welcome = ({ onLogin, onSignUp }) => {
+const Welcome = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to Otter Picks</Text>
       <Text style={styles.subtitle}>Your destination for sports betting insights and more!</Text>
       <View style={styles.buttonContainer}>
-        <Button title="Log In" color="#003f5c" onPress={onLogin} />
-        <Button title="Sign Up" color="#0077b6" onPress={onSignUp} />
+        <Button
+          title="Log In"
+          color="#003f5c"
+          onPress={() => navigation.navigate('Login')}
+        />
+        <Button
+          title="Sign Up"
+          color="#0077b6"
+          onPress={() => navigation.navigate('SignUp')}
+        />
+        <Button
+          title="Place Bet"
+          color="#0077b6"
+          onPress={() => navigation.navigate('PlaceBets')}
+        />
       </View>
     </View>
   );

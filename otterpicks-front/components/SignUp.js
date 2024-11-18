@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
-const SignUp = ({ onSignUpComplete }) => {
+const SignUp = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -9,10 +9,13 @@ const SignUp = ({ onSignUpComplete }) => {
 
   const handleSignUp = () => {
     if (username && email && password && password === confirmPassword) {
-      // Here, you could add your sign-up logic, e.g., sending the data to a backend
-      onSignUpComplete();
+      Alert.alert('Sign-Up Successful', 'Your account has been created!');
+      navigation.navigate('Dashboard'); 
     } else {
-      alert('Please make sure all fields are filled out correctly and passwords match');
+      Alert.alert(
+        'Sign-Up Failed',
+        'Please make sure all fields are filled out correctly and passwords match.'
+      );
     }
   };
 
@@ -53,8 +56,11 @@ const SignUp = ({ onSignUpComplete }) => {
       <View style={styles.buttonContainer}>
         <Button title="Sign Up" onPress={handleSignUp} />
         <Text style={styles.orText}>Or</Text>
-        <Button title="Log In" onPress={onLogin} />
-        </View>
+        <Button
+          title="Log In"
+          onPress={() => navigation.navigate('Login')} // Navigate to Login screen
+        />
+      </View>
     </View>
   );
 };
@@ -85,15 +91,16 @@ const styles = StyleSheet.create({
     color: '#005f73', // Dark text color in input
   },
   buttonContainer: {
-    flexDirection: 'column', // or 'column' for vertical stacking
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20,
   },
   orText: {
-    marginHorizontal: 10,
+    marginVertical: 10,
     color: '#005f73',
-  },  
+    fontSize: 16,
+  },
 });
 
 export default SignUp;
