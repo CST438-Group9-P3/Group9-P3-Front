@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
-const Login = ({ onLogin }) => {
+const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
     if (username && password) {
-      onLogin();
+      Alert.alert('Login Successful', 'Welcome back!');
+      navigation.navigate('Dashboard'); 
     } else {
-      alert('Please enter both username and password');
+      Alert.alert('Login Failed', 'Please enter both username and password.');
     }
   };
 
@@ -34,6 +35,15 @@ const Login = ({ onLogin }) => {
       <View style={styles.buttonContainer}>
         <Button title="Log In" color="#003f5c" onPress={handleLogin} />
       </View>
+      <Text style={styles.signUpText}>
+        Don't have an account?{' '}
+        <Text
+          style={styles.signUpLink}
+          onPress={() => navigation.navigate('SignUp')} 
+        >
+          Sign Up
+        </Text>
+      </Text>
     </View>
   );
 };
@@ -70,6 +80,15 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 8,
     overflow: 'hidden', // Rounds the button to match container style
+  },
+  signUpText: {
+    marginTop: 15,
+    color: '#ffffff',
+    fontSize: 16,
+  },
+  signUpLink: {
+    color: '#ffde59', // Highlighted link color
+    fontWeight: 'bold',
   },
 });
 

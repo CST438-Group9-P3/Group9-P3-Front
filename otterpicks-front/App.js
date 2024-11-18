@@ -1,47 +1,27 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { enableScreens } from 'react-native-screens';
 import Welcome from './components/Welcome';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import Dashboard from './components/Dashboard';
+import PlaceBets from './components/PlaceBets';
+
+enableScreens();
+
+const Stack = createStackNavigator();
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState('Welcome'); // Start at the Welcome screen
-
-  const handleLogin = () => {
-    setCurrentScreen('Dashboard'); // Show Dashboard after login
-  };
-
-  const handleLogout = () => {
-    setCurrentScreen('Welcome'); // Return to Welcome page on logout
-  };
-
-  const handleGoToLogin = () => {
-    setCurrentScreen('Login'); // Navigate to Login screen
-  };
-
-  const handleGoToSignUp = () => {
-    setCurrentScreen('SignUp'); // Navigate to SignUp screen
-  };
-
-  const handleSignUpComplete = () => {
-    setCurrentScreen('Dashboard'); // After sign-up, navigate to Dashboard
-  };
-
   return (
-    <View style={styles.container}>
-      {currentScreen === 'Welcome' && (
-        <Welcome onLogin={handleGoToLogin} onSignUp={handleGoToSignUp} />
-      )}
-      {currentScreen === 'Login' && <Login onLogin={handleLogin} />}
-      {currentScreen === 'SignUp' && <SignUp onSignUpComplete={handleSignUpComplete} />}
-      {currentScreen === 'Dashboard' && <Dashboard onLogout={handleLogout} />}
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Welcome">
+        <Stack.Screen name="Welcome" component={Welcome} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="Dashboard" component={Dashboard} />
+        <Stack.Screen name="PlaceBets" component={PlaceBets} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
