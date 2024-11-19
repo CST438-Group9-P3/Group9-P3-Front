@@ -13,11 +13,6 @@ const Welcome = ({ navigation }) => {
           onPress={() => navigation.navigate('Login')}
         />
         <Button
-          title="Sign Up"
-          color="#0077b6"
-          onPress={() => navigation.navigate('SignUp')}
-        />
-        <Button
           title="Place Bet"
           color="#0077b6"
           onPress={() => navigation.navigate('PlaceBets')}

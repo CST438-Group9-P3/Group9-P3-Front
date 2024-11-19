@@ -1,95 +1,69 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import React, { useEffect } from "react";
 
 const Login = ({ navigation }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const clientId = "71496720688-ggpucbdb22o8hveqovvhajgk265epee2.apps.googleusercontent.com"; // Replace with your Google Client ID
 
-  const handleLogin = () => {
-    if (username && password) {
-      Alert.alert('Login Successful', 'Welcome back!');
-      navigation.navigate('Dashboard'); 
-    } else {
-      Alert.alert('Login Failed', 'Please enter both username and password.');
+  useEffect(() => {
+    const loadGoogleScript = () => {
+      const script = document.createElement("script");
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        console.log("Google API script loaded successfully");
+
+        // Initialize Google Sign-In
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: handleCallbackResponse,
+        });
+
+        // Render the button
+        window.google.accounts.id.renderButton(
+          document.getElementById("signInButton"),
+          { theme: "outline", size: "large" }
+        );
+      };
+      document.body.appendChild(script);
+    };
+
+    if (!window.google) {
+      loadGoogleScript();
     }
+  }, []);
+
+  const handleCallbackResponse = (response) => {
+    console.log("Encoded JWT ID Token:", response.credential);
+    const userObject = JSON.parse(atob(response.credential.split(".")[1]));
+    console.log("User Info:", userObject);
+
+    // Navigate to PlaceBets screen
+    alert(`Welcome, ${userObject.name}!`);
+    navigation.navigate("Dashboard");
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Otter Picks</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        placeholderTextColor="#a0c4e8"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#a0c4e8"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <View style={styles.buttonContainer}>
-        <Button title="Log In" color="#003f5c" onPress={handleLogin} />
-      </View>
-      <Text style={styles.signUpText}>
-        Don't have an account?{' '}
-        <Text
-          style={styles.signUpLink}
-          onPress={() => navigation.navigate('SignUp')} 
-        >
-          Sign Up
-        </Text>
-      </Text>
-    </View>
+    <div style={styles.container}>
+      <h1 style={styles.title}>Welcome to Otter Picks</h1>
+      <div id="signInButton"></div> {/* Google Sign-In Button */}
+    </div>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#0093e9', // Ocean blue background
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100vh",
+    backgroundColor: "#0093e9",
   },
   title: {
-    fontSize: 28,
-    color: '#ffffff', // White text color
-    marginBottom: 20,
-    fontWeight: 'bold',
-    textShadowColor: '#005f73', // Slightly darker shadow for depth
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
+    fontSize: "2em",
+    color: "#fff",
+    marginBottom: "20px",
   },
-  input: {
-    width: '100%',
-    padding: 12,
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: '#005f73', // Darker ocean blue border
-    borderRadius: 8,
-    backgroundColor: '#ffffff', // Light background for input fields
-    color: '#005f73', // Dark text color in input
-  },
-  buttonContainer: {
-    marginTop: 20,
-    width: '100%',
-    borderRadius: 8,
-    overflow: 'hidden', // Rounds the button to match container style
-  },
-  signUpText: {
-    marginTop: 15,
-    color: '#ffffff',
-    fontSize: 16,
-  },
-  signUpLink: {
-    color: '#ffde59', // Highlighted link color
-    fontWeight: 'bold',
-  },
-});
+};
 
 export default Login;

@@ -1,4 +1,6 @@
 import { registerRootComponent } from 'expo';
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 
 import App from './App';
 
