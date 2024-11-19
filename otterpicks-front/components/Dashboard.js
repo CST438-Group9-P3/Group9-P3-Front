@@ -1,25 +1,34 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
 
-const Dashboard = ({ onLogout }) => {
+const Dashboard = ({ onLogout, navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to Your Dashboard</Text>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => navigation.navigate('UpcomingEvents')}
+      >
         <Text style={styles.sectionTitle}>Upcoming Events</Text>
         <Text style={styles.sectionContent}>Stay tuned for the latest updates!</Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => navigation.navigate('PlaceBets')}
+      >
         <Text style={styles.sectionTitle}>Betting Options</Text>
         <Text style={styles.sectionContent}>Explore betting options and place your bets.</Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => navigation.navigate('RecentResults')}
+      >
         <Text style={styles.sectionTitle}>Recent Results</Text>
         <Text style={styles.sectionContent}>Check out the latest game results here.</Text>
-      </View>
+      </TouchableOpacity>
 
       <View style={styles.logoutButtonContainer}>
         <Button title="Log Out" color="#003f5c" onPress={onLogout} />
