@@ -8,10 +8,10 @@ const Dashboard = ({ onLogout, navigation }) => {
 
       <TouchableOpacity
         style={styles.section}
-        onPress={() => navigation.navigate('UpcomingEvents')}
+        onPress={() => navigation.navigate('PlaceBets')}
       >
-        <Text style={styles.sectionTitle}>Upcoming Events</Text>
-        <Text style={styles.sectionContent}>Stay tuned for the latest updates!</Text>
+        <Text style={styles.sectionTitle}>Place Bet</Text>
+        <Text style={styles.sectionContent}>Make your bets and explore odds here.</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -24,7 +24,15 @@ const Dashboard = ({ onLogout, navigation }) => {
 
       <TouchableOpacity
         style={styles.section}
-        onPress={() => navigation.navigate('RecentResults')}
+        onPress={() => navigation.navigate('UpcomingEvents')}
+      >
+        <Text style={styles.sectionTitle}>Upcoming Events</Text>
+        <Text style={styles.sectionContent}>Stay tuned for the latest updates!</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => navigation.navigate('Results')}
       >
         <Text style={styles.sectionTitle}>Recent Results</Text>
         <Text style={styles.sectionContent}>Check out the latest game results here.</Text>
