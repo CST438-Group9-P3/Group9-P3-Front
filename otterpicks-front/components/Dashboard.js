@@ -4,7 +4,24 @@ import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
 const Dashboard = ({ onLogout, navigation }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Your Dashboard</Text>
+      <Text style={styles.title}>Welcome to Your Dashboard</Text
+
+      <TouchableOpacity
+        style={styles.section}
+ Dashboard-Edits
+        onPress={() => navigation.navigate('Results')}
+      >
+        <Text style={styles.sectionTitle}>Bet Results</Text>
+        <Text style={styles.sectionContent}>Check out the results from your bets here.</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => navigation.navigate('Bankroll')}
+      >
+        <Text style={styles.sectionTitle}>Bankroll</Text>
+        <Text style={styles.sectionContent}>Deposit and withdraw your funds.</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.section}
@@ -12,22 +29,12 @@ const Dashboard = ({ onLogout, navigation }) => {
       >
         <Text style={styles.sectionTitle}>Upcoming Events</Text>
         <Text style={styles.sectionContent}>Stay tuned for the latest updates!</Text>
-      </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.section}
-        onPress={() => navigation.navigate('PlaceBets')}
-      >
-        <Text style={styles.sectionTitle}>Betting Options</Text>
-        <Text style={styles.sectionContent}>Explore betting options and place your bets.</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.section}
         onPress={() => navigation.navigate('RecentResults')}
       >
         <Text style={styles.sectionTitle}>Recent Results</Text>
         <Text style={styles.sectionContent}>Check out the latest game results here.</Text>
+       main
       </TouchableOpacity>
 
       <View style={styles.logoutButtonContainer}>

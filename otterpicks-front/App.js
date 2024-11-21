@@ -6,6 +6,8 @@ import Welcome from './components/Welcome';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import PlaceBets from './components/PlaceBets';
+import Results from './components/Results';
+import Bankroll from './components/Bankroll';
 
 enableScreens();
 
@@ -19,6 +21,8 @@ export default function App() {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="PlaceBets" component={PlaceBets} />
+        <Stack.Screen name="Results" component={Results} />
+        <Stack.Screen name="Bankroll" component={Bankroll} />
       </Stack.Navigator>
     </NavigationContainer>
   );
