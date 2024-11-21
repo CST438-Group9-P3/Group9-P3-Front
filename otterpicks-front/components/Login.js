@@ -32,16 +32,46 @@ const Login = ({ navigation }) => {
     }
   }, []);
 
-  const handleCallbackResponse = (response) => {
+  const handleCallbackResponse = async (response) => {
     console.log("Encoded JWT ID Token:", response.credential);
+  
+    // Decode the JWT
     const userObject = JSON.parse(atob(response.credential.split(".")[1]));
     console.log("User Info:", userObject);
-
-    // Navigate to PlaceBets screen
-    alert(`Welcome, ${userObject.name}!`);
-    navigation.navigate("Dashboard");
+  
+    // Extract email and name (use `name` as `username`)
+    const email = userObject.email;
+    const username = userObject.name;
+  
+    try {
+      // Construct the API URL with query parameters
+      const apiUrl = `https://otterpicks-bbe3292b038b.herokuapp.com/login?email=${encodeURIComponent(
+        email
+      )}&username=${encodeURIComponent(username)}`;
+  
+      console.log("API URL:", apiUrl);
+  
+      const apiResponse = await fetch(apiUrl, {
+        method: "POST", 
+      });
+  
+      if (!apiResponse.ok) {
+        throw new Error(`Failed to save user. Status: ${apiResponse.status}`);
+      }
+  
+      const result = await apiResponse.json();
+      console.log("API Response:", result);
+  
+      // Navigate to PlaceBets screen
+      alert(`Welcome, ${result.username || username}!`);
+      navigation.navigate("Dashboard");
+    } catch (error) {
+      console.error("Error sending user data to API:", error);
+      alert("There was an error saving your information. Please try again.");
+    }
   };
-
+  
+  
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Welcome to Otter Picks</h1>
