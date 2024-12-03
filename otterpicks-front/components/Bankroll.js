@@ -1,11 +1,47 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
+import { UserContext } from "./UserContext";
+import { Alert } from "react-native"; // Ensure this import exists at the top of your file
+
 
 const Bankroll = () => {
-  const [balance, setBalance] = useState(100.0); // Starting balance
+    const { userId, balance, setBalance } = useContext(UserContext); // Get userId and balance from global context
+    // Initial balance (can also be fetched from backend)
   const [amount, setAmount] = useState(""); // Input amount
 
-  // Function to handle adding money
+  const BASE_URL = "https://otterpicks-bbe3292b038b.herokuapp.com"; // Your API base URL
+
+  // Function to handle the transaction request
+  const sendTransactionRequest = async (type, numericAmount) => {
+    const timestamp = new Date().toISOString().split("T")[0]; // Format current date as YYYY-MM-DD
+
+    // Construct the API URL with query parameters
+    const apiUrl = `${BASE_URL}/transaction?userId=${userId}&type=${type}&amount=${numericAmount}&timestamp=${timestamp}`;
+
+    console.log("API URL:", apiUrl); // Log the API URL to verify it is correct
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Transaction failed with status ${response.status}`);
+      }
+
+      const data = await response.json(); // Assume backend returns updated balance
+      console.log(data);
+      setBalance(data.user.account_balance); // Update balance based on the response
+      setAmount(""); // Clear the input
+      console.log("Transaction was successful, showing alert...");
+      Alert.alert("Success", `Your ${type} of $${numericAmount.toFixed(2)} was successful.`);
+    } catch (error) {
+      console.error(`Error during ${type}:`, error);
+      Alert.alert("Error", `There was an issue processing your ${type}. Please try again.`);
+    }
+  };
+
+  // Handle adding money
   const handleAddMoney = () => {
     const numericAmount = parseFloat(amount);
     if (isNaN(numericAmount) || numericAmount <= 0) {
@@ -13,12 +49,10 @@ const Bankroll = () => {
       return;
     }
 
-    setBalance((prevBalance) => prevBalance + numericAmount);
-    setAmount(""); // Clear input
-    Alert.alert("Success", `You added $${numericAmount.toFixed(2)} to your account.`);
+    sendTransactionRequest("deposit", numericAmount);
   };
 
-  // Function to handle withdrawing money
+  // Handle withdrawing money
   const handleWithdrawMoney = () => {
     const numericAmount = parseFloat(amount);
     if (isNaN(numericAmount) || numericAmount <= 0) {
@@ -31,15 +65,13 @@ const Bankroll = () => {
       return;
     }
 
-    setBalance((prevBalance) => prevBalance - numericAmount);
-    setAmount(""); // Clear input
-    Alert.alert("Success", `You withdrew $${numericAmount.toFixed(2)} from your account.`);
+    sendTransactionRequest("withdraw", numericAmount);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bankroll Management</Text>
-      <Text style={styles.balance}>Current Balance: ${balance.toFixed(2)}</Text>
+      <Text style={styles.balance}>Current Balance: ${balance}</Text>
 
       <TextInput
         style={styles.input}

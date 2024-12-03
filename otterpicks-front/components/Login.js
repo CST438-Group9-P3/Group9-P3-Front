@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { UserContext } from "./UserContext";
 
 const Login = ({ navigation }) => {
   const clientId = "71496720688-ggpucbdb22o8hveqovvhajgk265epee2.apps.googleusercontent.com"; // Replace with your Google Client ID
+  const { setUserId, setBalance } = useContext(UserContext); // Access setUserId from the context
 
   useEffect(() => {
     const loadGoogleScript = () => {
@@ -18,7 +20,7 @@ const Login = ({ navigation }) => {
           callback: handleCallbackResponse,
         });
 
-        // Render the button
+        // Render the Google sign-in button
         window.google.accounts.id.renderButton(
           document.getElementById("signInButton"),
           { theme: "outline", size: "large" }
@@ -34,35 +36,42 @@ const Login = ({ navigation }) => {
 
   const handleCallbackResponse = async (response) => {
     console.log("Encoded JWT ID Token:", response.credential);
-  
+
     // Decode the JWT
     const userObject = JSON.parse(atob(response.credential.split(".")[1]));
     console.log("User Info:", userObject);
-  
+
     // Extract email and name (use `name` as `username`)
     const email = userObject.email;
     const username = userObject.name;
-  
+    const userId = userObject.user_id; // The user's unique Google ID
+
+    // Set the userId in the context
+
     try {
       // Construct the API URL with query parameters
       const apiUrl = `https://otterpicks-bbe3292b038b.herokuapp.com/login?email=${encodeURIComponent(
         email
       )}&username=${encodeURIComponent(username)}`;
-  
+
       console.log("API URL:", apiUrl);
-  
+
       const apiResponse = await fetch(apiUrl, {
-        method: "POST", 
+        method: "POST",
       });
-  
+
       if (!apiResponse.ok) {
         throw new Error(`Failed to save user. Status: ${apiResponse.status}`);
       }
-  
+
       const result = await apiResponse.json();
       console.log("API Response:", result);
-  
-      // Navigate to PlaceBets screen
+      const realUserId = result.user_id;
+      const realBalance = result.account_balance;
+      setUserId(realUserId);
+      setBalance(realBalance);
+
+      // Navigate to the Dashboard after login
       alert(`Welcome, ${result.username || username}!`);
       navigation.navigate("Dashboard");
     } catch (error) {
@@ -70,8 +79,7 @@ const Login = ({ navigation }) => {
       alert("There was an error saving your information. Please try again.");
     }
   };
-  
-  
+
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Welcome to Otter Picks</h1>
@@ -97,3 +105,7 @@ const styles = {
 };
 
 export default Login;
+
+
+
+

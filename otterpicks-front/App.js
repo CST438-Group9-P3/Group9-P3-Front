@@ -8,6 +8,7 @@ import Dashboard from './components/Dashboard';
 import PlaceBets from './components/PlaceBets';
 import Results from './components/Results';
 import Bankroll from './components/Bankroll';
+import { UserContext, UserProvider } from './components/UserContext';
 
 enableScreens();
 
@@ -15,6 +16,7 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
+    <UserProvider>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Welcome">
         <Stack.Screen name="Welcome" component={Welcome} />
@@ -25,5 +27,6 @@ export default function App() {
         <Stack.Screen name="Bankroll" component={Bankroll} />
       </Stack.Navigator>
     </NavigationContainer>
+    </UserProvider>
   );
 }
