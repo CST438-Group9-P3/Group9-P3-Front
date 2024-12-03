@@ -16,10 +16,10 @@ const Dashboard = ({ onLogout, navigation }) => {
 
       <TouchableOpacity
         style={styles.section}
-        onPress={() => navigation.navigate('PlaceBets')}
+        onPress={() => navigation.navigate('Bankroll')}
       >
-        <Text style={styles.sectionTitle}>Betting Options</Text>
-        <Text style={styles.sectionContent}>Explore betting options and place your bets.</Text>
+        <Text style={styles.sectionTitle}>Bankroll</Text>
+        <Text style={styles.sectionContent}>Deposit or withdraw your funds</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
