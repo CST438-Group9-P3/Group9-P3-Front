@@ -130,7 +130,6 @@ const PlaceBets = () => {
   //     Alert.alert('Invalid Bet Amount', 'Please enter a valid bet amount for each player.');
   //     return;
   //   }
-
   //   Alert.alert(
   //     'Bet Placed',
   //     `You have placed bet totaling $${Object.values(betAmounts).reduce((sum, amt) => sum + parseFloat(amt), 0).toFixed(
