@@ -12,11 +12,7 @@ const Welcome = ({ navigation }) => {
           color="#003f5c"
           onPress={() => navigation.navigate('Login')}
         />
-        <Button
-          title="Place Bet"
-          color="#0077b6"
-          onPress={() => navigation.navigate('PlaceBets')}
-        />
+        
       </View>
     </View>
   );

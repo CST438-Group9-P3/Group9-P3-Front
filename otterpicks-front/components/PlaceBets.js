@@ -1,53 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, FlatList, Button, StyleSheet, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
+import { UserContext } from "./UserContext";
+import { format } from 'date-fns';
 
-const athletesData = [ // These are placeholders until we get the CSUMB athletes
-  { id: '1', name: 'LeBron James', line: '25.5 Pts', team: 'Lakers' },
-  { id: '2', name: 'Patrick Mahomes', line: '2.5 Passing TDs', team: 'Chiefs' },
-  { id: '3', name: 'Lionel Messi', line: '1.5 Goals', team: 'Inter Miami' },
-  { id: '4', name: 'Serena Williams', line: '6.5 Aces', team: 'USA' },
-];
+
+// const athletesData = [ // These are placeholders until we get the CSUMB athletes
+//   { id: '1', name: 'LeBron James', line: '25.5 Pts', team: 'Lakers' },
+//   { id: '2', name: 'Patrick Mahomes', line: '2.5 Passing TDs', team: 'Chiefs' },
+//   { id: '3', name: 'Lionel Messi', line: '1.5 Goals', team: 'Inter Miami' },
+//   { id: '4', name: 'Serena Williams', line: '6.5 Aces', team: 'USA' },
+// ];
 
 const PlaceBets = () => {
+  const [athletesData, setAthletesData] = useState([]); // Initialize empty athletes array
+  const { userId, balance, setBalance } = useContext(UserContext);
   const [selectedBets, setSelectedBets] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedBetType, setSelectedBetType] = useState({});
   const [betAmounts, setBetAmounts] = useState({}); // Store bet amounts per player
   const [selectedAthlete, setSelectedAthlete] = useState(null); // Store only one athlete's ID
 
-  const [userId, setUserId] = useState(4);
   const [playerId, setPlayerId] = useState(null);
   const [selection, setSelection] = useState(null);
-  const [stake, setStake] = useState(100);
-  const [targetValue, setTargetValue] = useState(10);
+  const [stake, setStake] = useState(null);
+  const [targetValue, setTargetValue] = useState(0);
   const [playerValue, setPlayerValue] = useState(0);
-  const [timestamp, setTimestamp] = useState(null);
 
-  setTargetValue(0); // always 0
-  setPlayerValue(0); // always 0
-  const currentTimestamp = new Date().toISOString(); 
-  setTimestamp(currentTimestamp);
-
+  const BASE_URL = "https://otterpicks-bbe3292b038b.herokuapp.com"; 
+    useEffect(() => {
+      const fetchAthletes = async () => {
+        try {
+          const response = await fetch(`${BASE_URL}/players`); 
+          if (!response.ok) {
+            throw new Error(`Failed to fetch athletes: ${response.status}`);
+          }
+          const data = await response.json();
+    
+          const formattedData = data.map((athlete) => ({
+            id: athlete.player_id.toString(), 
+            name: athlete.name,
+            line: `${athlete.player_stats} Pts`, 
+            team: athlete.team, 
+          }));
+    
+          setAthletesData(formattedData);
+        } catch (error) {
+          console.error('Error fetching athletes:', error);
+          Alert.alert('Error', 'Failed to load athletes. Please try again later.');
+        }
+      };
+    
+      fetchAthletes();
+    }, []);
   const createPick = async (userId, playerId, selection, stake, targetValue, playerValue, timestamp) => {
-    const url = `https://otterpicks-bbe3292b038b.herokuapp.com/createPick?userId=${userId}&playerId=${playerId}&selection=${selection}&stake=${stake}&targetValue=${targetValue}&playerValue=${playerValue}&timestamp=${timestamp}`;
-  
-    try {
-      const response = await fetch(url, {
-        method: 'POST', // Assuming the API requires a POST request
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Pick created:', data);
-      } else {
-        console.error('Failed to create pick:', response.status, response.statusText);
-      }
-    } catch (error) {
-      console.error('Error creating pick:', error);
+    console.log({
+      userId,
+      playerId,
+      selection,
+      stake,
+      targetValue,
+      playerValue,
+      timestamp
+  });
+  const apiUrl = `${BASE_URL}/createPick?userId=${userId}&playerId=${playerId}&selection=${selection}&stake=${stake}&targetValue=${targetValue}&playerValue=${playerValue}&timestamp=${timestamp}`;
+  console.log("API URL:", apiUrl); // Log the API URL to verify it is correct
+  try {
+    const response = await fetch(apiUrl, {
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text(); 
+      console.error('Failed to create pick:', response.status, response.statusText);
+      console.error('Server response:', errorBody); 
     }
+
+    const data = await response.json(); 
+    console.log(data);
+    console.log("Bet was successful, showing alert...");
+    Alert.alert("Success", `Your bet was successful.`);
+  } catch (error) {
+    console.error(`Error`, error);
+    Alert.alert("Error", `There was an issue processing. Please try again.`);
+  }
   };
 
   const toggleBetSelection = (athlete) => {
@@ -66,25 +101,23 @@ const PlaceBets = () => {
       // Select a new athlete, deselecting any previous one
       setSelectedAthlete(athlete.id);
       setPlayerId(athlete.id);
-      setSelectedBetType({ ...selectedBetType, [athlete.id]: 'defaultType' }); // Add/update bet type
+      setSelectedBetType('None'); // Add/update bet type
       setBetAmounts({ ...betAmounts, [athlete.id]: 0 }); // Initialize bet amount
     }
   };
 
   const handlePlaceBets = () => {
-    if (selectedBets.length === 0) {
+    if (selectedAthlete == null) {
       Alert.alert('No Bets Selected', 'Please select at least one bet to place.');
     } else {
       setShowModal(true); // Show modal to confirm bet
     }
   };
 
-  // const handleBetTypeSelection = (athleteId, betType) => {
-  //   setSelectedBetType((prevState) => ({
-  //     ...prevState,
-  //     [athleteId]: betType,
-  //   }));
-  // };
+  const handleBetTypeSelection = (betType) => {
+    setSelection(betType);
+    setSelectedBetType(betType);
+  };
 
   const handleBetAmountChange = (amount) => {
     if(amount > 0){
@@ -92,28 +125,26 @@ const PlaceBets = () => {
     }
   };
 
-  const handleConfirmBets = () => {
-    if (Object.values(betAmounts).some((amount) => !amount || parseFloat(amount) <= 0)) {
-      Alert.alert('Invalid Bet Amount', 'Please enter a valid bet amount for each player.');
-      return;
-    }
+  // const handleConfirmBets = () => {
+  //   if (Object.values(betAmounts).some((amount) => !amount || parseFloat(amount) <= 0)) {
+  //     Alert.alert('Invalid Bet Amount', 'Please enter a valid bet amount for each player.');
+  //     return;
+  //   }
 
-    Alert.alert(
-      'Bet Placed',
-      `You have placed bet totaling $${Object.values(betAmounts).reduce((sum, amt) => sum + parseFloat(amt), 0).toFixed(
-        2
-      )}!`
-    );
+  //   Alert.alert(
+  //     'Bet Placed',
+  //     `You have placed bet totaling $${Object.values(betAmounts).reduce((sum, amt) => sum + parseFloat(amt), 0).toFixed(
+  //       2
+  //     )}!`
+  //   );
 
-    setSelectedBets([]); // Clear selection after placing bets
-    setSelectedBetType({}); // Clear bet types
-    setBetAmounts({}); // Clear bet amounts
-    setShowModal(false); // Close modal
-  };
+  //   setSelectedBets([]); // Clear selection after placing bets
+  //   setSelectedBetType({}); // Clear bet types
+  //   setBetAmounts({}); // Clear bet amounts
+  //   setShowModal(false); // Close modal
+  // };
 
-  const renderAthlete = ({ item }) => {
-    // const isSelected = selectedBets.includes(item.id);
-
+  const renderAthlete = ({ item }) => {  
     return (
       <TouchableOpacity
       style={[
@@ -155,7 +186,7 @@ const PlaceBets = () => {
           <View style={styles.modalContainer}>
             <Text style={styles.modalHeader}>Confirm Your Bets</Text>
             <FlatList
-              data={athletesData.filter((athlete) => selectedBets.includes(athlete.id))}
+              data={selectedAthlete ? athletesData.filter((athlete) => athlete.id === selectedAthlete) : []}
               renderItem={({ item }) => (
                 <View style={styles.modalBet}>
                   <Text style={styles.athleteName}>{item.name}</Text>
@@ -165,12 +196,12 @@ const PlaceBets = () => {
                       <Button
                         title="Over"
                         color="#0077b6"
-                        onPress={() => setSelection('Over')}
+                        onPress={() => handleBetTypeSelection('Over')}
                       />
                       <Button
                         title="Under"
                         color="#d32f2f"
-                        onPress={() => setSelection('Under')}
+                        onPress={() => handleBetTypeSelection('Under')}
                       />
                     </View>
                     <TextInput
@@ -178,12 +209,12 @@ const PlaceBets = () => {
                       placeholder="$0.00"
                       placeholderTextColor="#a0a0a0"
                       keyboardType="numeric"
-                      value={betAmounts[item.id] || ''}
+                      value={stake || ''}
                       onChangeText={(amount) => handleBetAmountChange(amount)}
                     />
                   </View>
                   <Text style={styles.selectedBet}>
-                    Bet: {selectedBetType[item.id] || 'Not Selected'}
+                    Bet: {selection || 'Not Selected'}
                   </Text>
                 </View>
               )}
@@ -191,7 +222,12 @@ const PlaceBets = () => {
             />
             <View style={styles.confirmButtonContainer}>
               {/* <Button title="Confirm Bets" color="#0077b6" onPress={handleConfirmBets} /> */}
-              <Button title="Confirm Bets" color="#0077b6" onPress={createPick(userId, playerId, selection, stake, targetValue, playerValue, timestamp)} />
+              <Button title="Confirm Bets" color="#0077b6" 
+              onPress={() => 
+                {
+                  const timestamp = format(new Date(), 'yyyy-MM-dd');
+                  createPick(userId, playerId, selection, stake, targetValue, playerValue, timestamp)
+                }} />
               <Button
                 title="Cancel"
                 color="#d32f2f"
@@ -219,6 +255,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   list: {
+    flex: 1,
     paddingBottom: 20,
   },
   athleteCard: {
