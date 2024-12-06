@@ -1,40 +1,136 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
+import { UserContext } from "./UserContext";
 
 const Results = () => {
-  // Sample data for past and current bets
   const [pastBets, setPastBets] = useState([]);
   const [currentBets, setCurrentBets] = useState([]);
+  const { userId, balance, setBalance } = useContext(UserContext);
+
+  const BASE_URL = "https://otterpicks-bbe3292b038b.herokuapp.com"; // Database URL
+
+  function generateNearbyRandomNumber(target, variation = 5) {
+    const lowerBound = target - variation;
+    const upperBound = target + variation;
+  
+    const isBelow = Math.random() < 0.5;
+  
+    if (isBelow) {
+      return Math.floor(Math.random() * (target - lowerBound)) + lowerBound;
+    } else {
+      return Math.floor(Math.random() * (upperBound - target)) + target + 1;
+    }
+  }
+
+  const simulateGame = async (pickId, playerStat) => {
+
+    simValue = generateNearbyRandomNumber(playerStat)
+
+    try {
+      const response = await fetch(`${BASE_URL}/finalizePick?userId=${userId}&pickId=${pickId}&simValue=${simValue}`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to simulate game for pickId ${pickId}: ${response.status}`);
+      }
+
+      const data = await response.json();
+      Alert.alert("Game Simulated", `The game for pick ${pickId} has been finalized.`);
+      // Optionally refresh the active bets after simulation
+      fetchActiveBets();
+    } catch (error) {
+      console.error("Error simulating game:", error);
+      Alert.alert("Error", "Failed to simulate the game. Please try again later.");
+    }
+  };
 
   useEffect(() => {
-    // Mock fetching bets from an API or database
-    const fetchBets = async () => {
-      // Replace this with your API fetch logic if needed
-      const mockPastBets = [
-        { id: 1, match: "Team A vs Team B", bet: "$50 on Team A", result: "Win" },
-        { id: 2, match: "Team C vs Team D", bet: "$30 on Team D", result: "Loss" },
-        { id: 3, match: "Team E vs Team F", bet: "$20 on Team E", result: "Win" },
-      ];
+    const fetchActiveBets = async () => {
+      try {
+        setCurrentBets([]);
 
-      const mockCurrentBets = [
-        { id: 1, match: "Team G vs Team H", bet: "$40 on Team G" },
-        { id: 2, match: "Team I vs Team J", bet: "$25 on Team I" },
-      ];
+        const response = await fetch(`${BASE_URL}/userActivePicks?userId=${userId}`);
 
-      setPastBets(mockPastBets);
-      setCurrentBets(mockCurrentBets);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch picks for userId ${userId}: ${response.status}`);
+        }
+        const data = await response.json();
+
+        const formattedData = data.map((pick) => ({
+          id: pick.pick_id.toString(), 
+          playerName: pick.player.name, 
+          playerStats: `${pick.player.player_stats} Pts`, 
+          selection: pick.selection, 
+          stake: `$${pick.stake.toFixed(2)}`, 
+          status: pick.status, 
+        }));
+  
+        // Update the state with the formatted picks data
+        setCurrentBets(formattedData);
+      } catch (error) {
+        console.error('Error fetching picks for user:', error);
+        alert('Error', 'Failed to load your picks. Please try again later.');
+      }
     };
+    
+      fetchActiveBets();
+  }, []);
 
-    fetchBets();
+  useEffect(() => {
+    const fetchPastBets = async () => {
+      try {
+        setPastBets([]);
+
+        const response = await fetch(`${BASE_URL}/userPastPicks?userId=${userId}`);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch picks for userId ${userId}: ${response.status}`);
+        }
+        const data = await response.json();
+
+        const formattedData = data.map((pick) => ({
+          id: pick.pick_id.toString(), 
+          playerName: pick.player.name, 
+          playerStats: `${pick.player.player_stats} Pts`, 
+          selection: pick.selection, 
+          stake: `$${pick.stake.toFixed(2)}`, 
+          status: pick.status, 
+          result: pick.result,
+        }));
+  
+        // Update the state with the formatted picks data
+        setCurrentBets(formattedData);
+      } catch (error) {
+        console.error('Error fetching picks for user:', error);
+        alert('Error', 'Failed to load your picks. Please try again later.');
+      }
+    };
+    
+      fetchPastBets();
   }, []);
 
   // Render individual bet items
-  const renderBetItem = ({ item }) => (
+  const renderActiveBetItem = ({ item }) => (
     <View style={styles.betItem}>
-      <Text style={styles.match}>{item.match}</Text>
-      <Text style={styles.bet}>{item.bet}</Text>
-      {item.result && <Text style={styles.result}>Result: {item.result}</Text>}
-    </View>
+    <Text style={styles.match}>Player: {item.playerName}</Text>
+    <Text style={styles.bet}>Line: {item.playerStats}</Text>
+    <Text style={styles.bet}>Selection: {item.selection}</Text>
+    <Text style={styles.bet}>Stake: {item.stake}</Text>
+    <Text style={styles.result}>Status: {item.status}</Text>
+  </View>
+  );
+
+  const renderPastBetItem = ({ item }) => (
+    <View style={styles.betItem}>
+    <Text style={styles.match}>Player: {item.playerName}</Text>
+    <Text style={styles.bet}>Line: {item.playerStats}</Text>
+    <Text style={styles.bet}>Selection: {item.selection}</Text>
+    <Text style={styles.bet}>Stake: {item.stake}</Text>
+    <Text style={styles.result}>Status: {item.status}</Text>
+    <Text style={styles.result}>Result: {item.result}</Text>
+    <Button title="Simulate Game" onPress={() => simulateGame(item.id, item.player_stats)} />
+  </View>
   );
 
   return (
@@ -46,7 +142,7 @@ const Results = () => {
         <FlatList
           data={currentBets}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={renderBetItem}
+          renderItem={renderActiveBetItem}
         />
       ) : (
         <Text style={styles.noBets}>No current bets</Text>
@@ -57,7 +153,7 @@ const Results = () => {
         <FlatList
           data={pastBets}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={renderBetItem}
+          renderItem={renderPastBetItem}
         />
       ) : (
         <Text style={styles.noBets}>No past bets</Text>
