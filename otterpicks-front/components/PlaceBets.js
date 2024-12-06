@@ -34,6 +34,7 @@ const PlaceBets = () => {
           id: athlete.player_id.toString(), 
           name: athlete.name,
           line: `${athlete.player_stats} Pts`, 
+          target: athlete.player_stats,
           team: athlete.team, 
         }));
     
@@ -88,6 +89,7 @@ const PlaceBets = () => {
       // Deselect if the same athlete is clicked again
       setSelectedAthlete(null);
       setPlayerId(null);
+      setTargetValue(null);
       const updatedBetType = { ...selectedBetType };
       delete updatedBetType[athlete.id];
       setSelectedBetType(updatedBetType);
@@ -99,6 +101,7 @@ const PlaceBets = () => {
       // Select a new athlete, deselecting any previous one
       setSelectedAthlete(athlete.id);
       setPlayerId(athlete.id);
+      setTargetValue(athlete.target);
       setSelectedBetType('None'); // Add/update bet type
       setBetAmounts({ ...betAmounts, [athlete.id]: 0 });
     }
