@@ -10,16 +10,11 @@ const Results = () => {
   const BASE_URL = "https://otterpicks-bbe3292b038b.herokuapp.com"; // Database URL
 
   function generateNearbyRandomNumber(target, variation = 5) {
-    const lowerBound = target - variation;
-    const upperBound = target + variation;
-  
-    const isBelow = Math.random() < 0.5;
-  
-    if (isBelow) {
-      return Math.floor(Math.random() * (target - lowerBound)) + lowerBound;
-    } else {
-      return Math.floor(Math.random() * (upperBound - target)) + target + 1;
-    }
+    let newTarget = Number(target); 
+    const lowerBound = newTarget - variation;
+    const upperBound = newTarget + variation;
+    const randomNumber = Math.floor(Math.random() * (upperBound - lowerBound + 1)) + lowerBound;
+    return randomNumber;
   }
 
   const simulateGame = async (pickId, playerStat) => {
