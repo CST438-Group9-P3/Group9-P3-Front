@@ -3,22 +3,15 @@ import { View, Text, FlatList, Button, StyleSheet, TouchableOpacity, Alert, Moda
 import { UserContext } from "./UserContext";
 import { format } from 'date-fns';
 
-
-// const athletesData = [ // These are placeholders until we get the CSUMB athletes
-//   { id: '1', name: 'LeBron James', line: '25.5 Pts', team: 'Lakers' },
-//   { id: '2', name: 'Patrick Mahomes', line: '2.5 Passing TDs', team: 'Chiefs' },
-//   { id: '3', name: 'Lionel Messi', line: '1.5 Goals', team: 'Inter Miami' },
-//   { id: '4', name: 'Serena Williams', line: '6.5 Aces', team: 'USA' },
-// ];
-
 const PlaceBets = () => {
-  const [athletesData, setAthletesData] = useState([]); // Initialize empty athletes array
+  const [athletesData, setAthletesData] = useState([]); 
   const { userId, balance, setBalance } = useContext(UserContext);
+  const [amount, setAmount] = useState(""); 
   const [selectedBets, setSelectedBets] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedBetType, setSelectedBetType] = useState({});
-  const [betAmounts, setBetAmounts] = useState({}); // Store bet amounts per player
-  const [selectedAthlete, setSelectedAthlete] = useState(null); // Store only one athlete's ID
+  const [betAmounts, setBetAmounts] = useState({}); 
+  const [selectedAthlete, setSelectedAthlete] = useState(null); 
 
   const [playerId, setPlayerId] = useState(null);
   const [selection, setSelection] = useState(null);
@@ -26,24 +19,25 @@ const PlaceBets = () => {
   const [targetValue, setTargetValue] = useState(0);
   const [playerValue, setPlayerValue] = useState(0);
 
-  const BASE_URL = "https://otterpicks-bbe3292b038b.herokuapp.com"; 
-    useEffect(() => {
-      const fetchAthletes = async () => {
-        try {
-          const response = await fetch(`${BASE_URL}/players`); 
-          if (!response.ok) {
-            throw new Error(`Failed to fetch athletes: ${response.status}`);
-          }
-          const data = await response.json();
+  const BASE_URL = "https://otterpicks-bbe3292b038b.herokuapp.com"; // Database URL
+  
+  useEffect(() => { // Gets CSUMB players from DB
+    const fetchAthletes = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/players`); 
+        if (!response.ok) {
+          throw new Error(`Failed to fetch athletes: ${response.status}`);
+        }
+        const data = await response.json();
     
-          const formattedData = data.map((athlete) => ({
-            id: athlete.player_id.toString(), 
-            name: athlete.name,
-            line: `${athlete.player_stats} Pts`, 
-            team: athlete.team, 
-          }));
+        const formattedData = data.map((athlete) => ({
+          id: athlete.player_id.toString(), 
+          name: athlete.name,
+          line: `${athlete.player_stats} Pts`, 
+          team: athlete.team, 
+        }));
     
-          setAthletesData(formattedData);
+        setAthletesData(formattedData);
         } catch (error) {
           console.error('Error fetching athletes:', error);
           Alert.alert('Error', 'Failed to load athletes. Please try again later.');
@@ -52,37 +46,41 @@ const PlaceBets = () => {
     
       fetchAthletes();
     }, []);
-  const createPick = async (userId, playerId, selection, stake, targetValue, playerValue, timestamp) => {
-    console.log({
-      userId,
-      playerId,
-      selection,
-      stake,
-      targetValue,
-      playerValue,
-      timestamp
-  });
-  const apiUrl = `${BASE_URL}/createPick?userId=${userId}&playerId=${playerId}&selection=${selection}&stake=${stake}&targetValue=${targetValue}&playerValue=${playerValue}&timestamp=${timestamp}`;
-  console.log("API URL:", apiUrl); // Log the API URL to verify it is correct
-  try {
-    const response = await fetch(apiUrl, {
-      method: "POST",
-    });
 
-    if (!response.ok) {
-      const errorBody = await response.text(); 
-      console.error('Failed to create pick:', response.status, response.statusText);
-      console.error('Server response:', errorBody); 
+  // Create a pick
+  const createPick = async (userId, playerId, selection, stake, targetValue, playerValue, timestamp) => {
+    const hasSufficientFunds = handleBetWithdrawMoney(stake); // checks if there are sufficient funds
+
+    if (!hasSufficientFunds) {
+      console.error("Insufficient funds to place the bet.");
+      Alert.alert("Error", "You do not have enough funds to place this bet.");
+      return; 
     }
 
-    const data = await response.json(); 
-    console.log(data);
-    console.log("Bet was successful, showing alert...");
-    Alert.alert("Success", `Your bet was successful.`);
-  } catch (error) {
-    console.error(`Error`, error);
-    Alert.alert("Error", `There was an issue processing. Please try again.`);
-  }
+    const apiUrl = `${BASE_URL}/createPick?userId=${userId}&playerId=${playerId}&selection=${selection}&stake=${stake}&targetValue=${targetValue}&playerValue=${playerValue}&timestamp=${timestamp}`;
+    console.log("API URL:", apiUrl); // Logging the API URL to verify it is correct
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        console.error("Failed to create pick:", response.status, response.statusText);
+        console.error("Server response:", errorBody);
+        alert("Error", `Failed to create pick: ${response.statusText}`);
+        return;
+      }
+
+      const data = await response.json();
+      console.log(data);
+      console.log("Bet was successful, showing alert...");
+      alert("Success", `Your bet was successful.`);
+    } catch (error) {
+      console.error(`Error`, error);
+      alert("Error", `There was an issue processing. Please try again.`);
+    }
   };
 
   const toggleBetSelection = (athlete) => {
@@ -102,7 +100,7 @@ const PlaceBets = () => {
       setSelectedAthlete(athlete.id);
       setPlayerId(athlete.id);
       setSelectedBetType('None'); // Add/update bet type
-      setBetAmounts({ ...betAmounts, [athlete.id]: 0 }); // Initialize bet amount
+      setBetAmounts({ ...betAmounts, [athlete.id]: 0 });
     }
   };
 
@@ -114,35 +112,60 @@ const PlaceBets = () => {
     }
   };
 
-  const handleBetTypeSelection = (betType) => {
+  const handleBetTypeSelection = (betType) => { // checks if it is Over or Under
     setSelection(betType);
     setSelectedBetType(betType);
   };
 
-  const handleBetAmountChange = (amount) => {
+  const handleBetAmountChange = (amount) => { // Confirms you are betting money
     if(amount > 0){
       setStake(amount);
     }
   };
+ 
+    // Function to handle the transaction request
+  const sendTransactionRequest = async (type, numericAmount) => {
+    const timestamp = new Date().toISOString().split("T")[0]; // Format current date as YYYY-MM-DD
+  
+    // Construct the API URL with query parameters
+    const apiUrl = `${BASE_URL}/transaction?userId=${userId}&type=${type}&amount=${numericAmount}&timestamp=${timestamp}`;
+  
+    console.log("API URL:", apiUrl); // Log the API URL to verify it is correct
+  
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Transaction failed with status ${response.status}`);
+      }
+  
+      const data = await response.json(); // Assume backend returns updated balance
+      console.log(data);
+      setBalance(data.user.account_balance); // Update balance based on the response
+      setAmount(""); // Clear the input
+      console.log("Transaction was successful, showing alert...");
+      } catch (error) {
+        console.error(`Error during ${type}:`, error);
+      }
+    };
+    
+  const handleBetWithdrawMoney = (stake) => { // removes money from your account 
+    const numericAmount = parseFloat(stake);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      alert("Invalid Input", "Please enter a valid amount to withdraw.");
+      return false;
+    }
 
-  // const handleConfirmBets = () => {
-  //   if (Object.values(betAmounts).some((amount) => !amount || parseFloat(amount) <= 0)) {
-  //     Alert.alert('Invalid Bet Amount', 'Please enter a valid bet amount for each player.');
-  //     return;
-  //   }
+    if (numericAmount > balance) {
+      alert("Insufficient Funds");
+      return false;
+    }
 
-  //   Alert.alert(
-  //     'Bet Placed',
-  //     `You have placed bet totaling $${Object.values(betAmounts).reduce((sum, amt) => sum + parseFloat(amt), 0).toFixed(
-  //       2
-  //     )}!`
-  //   );
-
-  //   setSelectedBets([]); // Clear selection after placing bets
-  //   setSelectedBetType({}); // Clear bet types
-  //   setBetAmounts({}); // Clear bet amounts
-  //   setShowModal(false); // Close modal
-  // };
+    sendTransactionRequest("withdraw", numericAmount);
+    return true;
+  };
 
   const renderAthlete = ({ item }) => {  
     return (
@@ -221,12 +244,12 @@ const PlaceBets = () => {
               keyExtractor={(item) => item.id}
             />
             <View style={styles.confirmButtonContainer}>
-              {/* <Button title="Confirm Bets" color="#0077b6" onPress={handleConfirmBets} /> */}
               <Button title="Confirm Bets" color="#0077b6" 
               onPress={() => 
                 {
                   const timestamp = format(new Date(), 'yyyy-MM-dd');
                   createPick(userId, playerId, selection, stake, targetValue, playerValue, timestamp)
+                  setShowModal(false)
                 }} />
               <Button
                 title="Cancel"
