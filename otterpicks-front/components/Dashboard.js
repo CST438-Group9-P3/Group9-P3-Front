@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
+import { UserContext } from "./UserContext";
+
 
 const Dashboard = ({ onLogout, navigation }) => {
+  const { userId } = useContext(UserContext);
+
+  adminUserIds = [4, 5];
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to Your Dashboard</Text>
@@ -22,13 +28,15 @@ const Dashboard = ({ onLogout, navigation }) => {
         <Text style={styles.sectionContent}>Deposit or withdraw your funds</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.section}
-        onPress={() => navigation.navigate('UpcomingEvents')}
-      >
-        <Text style={styles.sectionTitle}>Upcoming Events</Text>
-        <Text style={styles.sectionContent}>Stay tuned for the latest updates!</Text>
-      </TouchableOpacity>
+      {adminUserIds.includes(userId) && (
+        <TouchableOpacity
+          style={styles.section}
+          onPress={() => navigation.navigate('Admin')}
+        >
+          <Text style={styles.sectionTitle}>Admin</Text>
+          <Text style={styles.sectionContent}>Manage admin settings and updates</Text>
+        </TouchableOpacity>
+      )}
 
       <TouchableOpacity
         style={styles.section}
