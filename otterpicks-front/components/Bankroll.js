@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { UserContext } from "./UserContext";
-import { Alert } from "react-native"; // Ensure this import exists at the top of your file
 
 
 const Bankroll = () => {
