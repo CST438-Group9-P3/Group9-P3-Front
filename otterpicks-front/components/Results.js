@@ -20,11 +20,6 @@ const Results = () => {
   const simulateGame = async (pickId, playerStat) => {
     console.log("playerStats:", playerStat);
     simValue = generateNearbyRandomNumber(playerStat)
-    if (isNaN(simValue)) {
-      console.error("Simulated value is NaN");
-      return;
-    }
-  
 
     try {
       const response = await fetch(`${BASE_URL}/finalizePick?userId=${userId}&pickId=${pickId}&simValue=${simValue}`, {
@@ -37,67 +32,67 @@ const Results = () => {
 
       const data = await response.json();
       alert("Game Simulated", `The game for pick ${pickId} has been finalized.`);
-      // Optionally refresh the active bets after simulation
-      // fetchActiveBets();
+      fetchActiveBets();
+      fetchPastBets();
     } catch (error) {
       console.error("Error simulating game:", error);
       alert("Error", "Failed to simulate the game. Please try again later.");
     }
   };
 
-  useEffect(() => {
-    const fetchActiveBets = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/userActivePicks?userId=${userId}`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch active bets: ${response.status}`);
-        }
-        const data = await response.json();
-        const formattedData = data.map((pick) => ({
-          id: pick.pick_id.toString(),
-          playerName: pick.player.name,
-          playerStats: `${pick.player.player_stats} Pts`,
-          Line: pick.player.player_stats,
-          selection: pick.selection,
-          stake: `$${pick.stake.toFixed(2)}`,
-          status: pick.status,
-        }));
-        setCurrentBets(formattedData);
-      } catch (error) {
-        console.error("Error fetching active bets:", error);
-        Alert.alert("Error", "Failed to load active bets. Please try again later.");
+  const fetchActiveBets = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/userActivePicks?userId=${userId}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch active bets: ${response.status}`);
       }
-    };
-    
+      const data = await response.json();
+      const formattedData = data.map((pick) => ({
+        id: pick.pick_id.toString(),
+        playerName: pick.player.name,
+        playerStats: `${pick.player.player_stats} Pts`,
+        Line: pick.player.player_stats,
+        selection: pick.selection,
+        stake: `$${pick.stake.toFixed(2)}`,
+        status: pick.status,
+      }));
+      setCurrentBets(formattedData);
+    } catch (error) {
+      console.error("Error fetching active bets:", error);
+      Alert.alert("Error", "Failed to load active bets. Please try again later.");
+    }
+  };
+
+  const fetchPastBets = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/userPastPicks?userId=${userId}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch past bets: ${response.status}`);
+      }
+      const data = await response.json();
+      const formattedData = data.map((pick) => ({
+        id: pick.pick_id.toString(),
+        playerName: pick.player.name,
+        playerStats: `${pick.player.player_stats} Pts`,
+        Line: pick.player.player_stats,
+        Actual: pick.playerValue,
+        selection: pick.selection,
+        stake: `$${pick.stake.toFixed(2)}`,
+        status: pick.status,
+        result: pick.result,
+      }));
+      setPastBets(formattedData);
+    } catch (error) {
+      console.error("Error fetching past bets:", error);
+      Alert.alert("Error", "Failed to load past bets. Please try again later.");
+    }
+  };
+
+  useEffect(() => {
       fetchActiveBets();
   }, []);
 
   useEffect(() => {
-    const fetchPastBets = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/userPastPicks?userId=${userId}`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch past bets: ${response.status}`);
-        }
-        const data = await response.json();
-        const formattedData = data.map((pick) => ({
-          id: pick.pick_id.toString(),
-          playerName: pick.player.name,
-          playerStats: `${pick.player.player_stats} Pts`,
-          Line: pick.player.player_stats,
-          Actual: pick.playerValue,
-          selection: pick.selection,
-          stake: `$${pick.stake.toFixed(2)}`,
-          status: pick.status,
-          result: pick.result,
-        }));
-        setPastBets(formattedData);
-      } catch (error) {
-        console.error("Error fetching past bets:", error);
-        Alert.alert("Error", "Failed to load past bets. Please try again later.");
-      }
-    };
-    
       fetchPastBets();
   }, []);
 
