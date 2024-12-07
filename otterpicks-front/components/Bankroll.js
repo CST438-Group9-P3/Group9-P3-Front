@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { UserContext } from "./UserContext";
 
@@ -8,7 +8,28 @@ const Bankroll = () => {
     // Initial balance (can also be fetched from backend)
   const [amount, setAmount] = useState(""); // Input amount
 
-  const BASE_URL = "https://otterpicks-bbe3292b038b.herokuapp.com"; // Your API base URL
+  const BASE_URL = "https://otterpicks-bbe3292b038b.herokuapp.com"; 
+
+  // Fetch the current balance from the server
+  const fetchBalance = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/getBalance?userId=${userId}`); // Adjust the endpoint as needed
+      if (!response.ok) {
+        throw new Error(`Failed to fetch balance: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setBalance(data); // Update the balance in the context
+    } catch (error) {
+      console.error("Error fetching balance:", error);
+      Alert.alert("Error", "Failed to fetch the balance. Please try again later.");
+    }
+  };
+
+  // Use useEffect to fetch the balance when the component mounts
+  useEffect(() => {
+    fetchBalance();
+  }, []);
 
   // Function to handle the transaction request
   const sendTransactionRequest = async (type, numericAmount) => {
@@ -17,7 +38,6 @@ const Bankroll = () => {
     // Construct the API URL with query parameters
     const apiUrl = `${BASE_URL}/transaction?userId=${userId}&type=${type}&amount=${numericAmount}&timestamp=${timestamp}`;
 
-    console.log("API URL:", apiUrl); // Log the API URL to verify it is correct
 
     try {
       const response = await fetch(apiUrl, {

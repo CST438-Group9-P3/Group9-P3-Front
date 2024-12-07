@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "./UserContext";
 
 const Login = ({ navigation }) => {
-  const clientId = "71496720688-ggpucbdb22o8hveqovvhajgk265epee2.apps.googleusercontent.com"; // Replace with your Google Client ID
+  const clientId = "71496720688-ggpucbdb22o8hveqovvhajgk265epee2.apps.googleusercontent.com"; 
   const { setUserId, setBalance } = useContext(UserContext); // Access setUserId from the context
 
   useEffect(() => {

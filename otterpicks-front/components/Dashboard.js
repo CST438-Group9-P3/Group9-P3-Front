@@ -3,7 +3,9 @@ import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import { UserContext } from "./UserContext";
 
 
-const Dashboard = ({ onLogout, navigation }) => {
+const Dashboard = ({ navigation }) => {
+
+
   const { userId } = useContext(UserContext);
 
   adminUserIds = [4, 5];
@@ -45,10 +47,6 @@ const Dashboard = ({ onLogout, navigation }) => {
         <Text style={styles.sectionTitle}>Recent Results</Text>
         <Text style={styles.sectionContent}>Check out the latest game results here.</Text>
       </TouchableOpacity>
-
-      <View style={styles.logoutButtonContainer}>
-        <Button title="Log Out" color="#003f5c" onPress={onLogout} />
-      </View>
     </View>
   );
 };
