@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, FlatList, Button, StyleSheet, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
+import { View, Text, FlatList, Button, StyleSheet, TouchableOpacity, Alert, Modal, TextInput, Image } from 'react-native';
 import { UserContext } from "./UserContext";
 import { format } from 'date-fns';
 
@@ -35,7 +35,9 @@ const PlaceBets = () => {
           name: athlete.name,
           line: `${athlete.player_stats} Pts`, 
           target: athlete.player_stats,
+          image: athlete.image,
           team: athlete.team, 
+          position: athlete.position,
         }));
     
         setAthletesData(formattedData);
@@ -180,9 +182,17 @@ const PlaceBets = () => {
       onPress={() => toggleBetSelection(item)}
       >
         <View style={styles.athleteInfo}>
+        <Image
+          source={{ uri: item.image }}
+          style={{width: 125, height: 125}}
+          resizeMode="cover"
+        />
+        <View style={styles.info}>
           <Text style={styles.athleteName}>{item.name}</Text>
-          <Text style={styles.athleteLine}>{item.line}</Text>
+          <Text style={styles.athleteLine}>Line: {item.line}</Text>
           <Text style={styles.athleteTeam}>{item.team}</Text>
+          <Text style={styles.athleteTeam}>Position: {item.position}</Text>
+        </View>
         </View>
       </TouchableOpacity>
     );
@@ -368,6 +378,20 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: '#555',
   },
+  athleteImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25, 
+    marginRight: 10, 
+  },
+    athleteInfo: {
+    flexDirection: 'row', 
+    alignItems: 'center', 
+  },
+  info: {
+    flexDirection: 'column',
+    paddingLeft: 20
+  }
 });
 
 export default PlaceBets;
