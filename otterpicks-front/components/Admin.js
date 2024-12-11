@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, Button, Alert, StyleSheet } from "react-native";
 
 const Admin = () => {
-  const [picks, setPicks] = useState([]); // State to store all picks
-  const BASE_URL = "https://otterpicks-bbe3292b038b.herokuapp.com"; // Your backend API URL
+  const [picks, setPicks] = useState([]); 
+  const BASE_URL = "https://otterpicks-bbe3292b038b.herokuapp.com"; 
 
-  // Fetch all picks from the database
   const fetchPicks = async () => {
     try {
       const response = await fetch(`${BASE_URL}/picks`);
@@ -13,14 +12,13 @@ const Admin = () => {
         throw new Error(`Failed to fetch picks: ${response.status}`);
       }
       const data = await response.json();
-      setPicks(data); // Update state with fetched picks
+      setPicks(data); 
     } catch (error) {
       console.error("Error fetching picks:", error);
       Alert.alert("Error", "Failed to load picks. Please try again later.");
     }
   };
 
-  // Delete a pick
   const deletePick = async (pickId) => {
     console.log(`Deleting pick with ID: ${pickId}`);
     console.log(`Request URL: ${BASE_URL}/deletePick?pickId=${pickId}`);
@@ -31,7 +29,6 @@ const Admin = () => {
       if (!response.ok) {
         throw new Error(`Failed to delete pick: ${response.status}`);
       }
-      // Filter out the deleted pick from the state
       setPicks((prevPicks) => prevPicks.filter((pick) => pick.id !== pickId));
       alert("Success", `Pick ${pickId} has been deleted.`);
       fetchPicks();
@@ -41,12 +38,10 @@ const Admin = () => {
     }
   };
 
-  // Fetch picks when the component loads
   useEffect(() => {
     fetchPicks();
   }, []);
 
-  // Render a single pick
   const renderPickItem = ({ item }) => (
     <View style={styles.pickItem}>
       <Text style={styles.pickText}>User: {item.user.username}</Text>
@@ -70,7 +65,7 @@ const Admin = () => {
       {picks.length > 0 ? (
         <FlatList style={{ height: 600 }}
           data={picks}
-          keyExtractor={(item) => item.pick_id.toString()} // Ensure the key is a string
+          keyExtractor={(item) => item.pick_id.toString()} 
           renderItem={renderPickItem}
         />
       ) : (

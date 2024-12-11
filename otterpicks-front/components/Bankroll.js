@@ -4,9 +4,9 @@ import { UserContext } from "./UserContext";
 
 
 const Bankroll = () => {
-    const { userId, balance, setBalance } = useContext(UserContext); // Get userId and balance from global context
-    // Initial balance (can also be fetched from backend)
-  const [amount, setAmount] = useState(""); // Input amount
+    const { userId, balance, setBalance } = useContext(UserContext); 
+  const [amount, setAmount] = useState(""); 
+
 
   const BASE_URL = "https://otterpicks-bbe3292b038b.herokuapp.com"; 
 
@@ -31,13 +31,11 @@ const Bankroll = () => {
     fetchBalance();
   }, []);
 
-  // Function to handle the transaction request
+
   const sendTransactionRequest = async (type, numericAmount) => {
-    const timestamp = new Date().toISOString().split("T")[0]; // Format current date as YYYY-MM-DD
+    const timestamp = new Date().toISOString().split("T")[0]; 
 
-    // Construct the API URL with query parameters
     const apiUrl = `${BASE_URL}/transaction?userId=${userId}&type=${type}&amount=${numericAmount}&timestamp=${timestamp}`;
-
 
     try {
       const response = await fetch(apiUrl, {
@@ -48,10 +46,9 @@ const Bankroll = () => {
         throw new Error(`Transaction failed with status ${response.status}`);
       }
 
-      const data = await response.json(); // Assume backend returns updated balance
-      console.log(data);
-      setBalance(data.user.account_balance); // Update balance based on the response
-      setAmount(""); // Clear the input
+      const data = await response.json(); 
+      setBalance(data.user.account_balance); 
+      setAmount("");
       console.log("Transaction was successful, showing alert...");
       Alert.alert("Success", `Your ${type} of $${numericAmount.toFixed(2)} was successful.`);
     } catch (error) {
@@ -60,7 +57,6 @@ const Bankroll = () => {
     }
   };
 
-  // Handle adding money
   const handleAddMoney = () => {
     const numericAmount = parseFloat(amount);
     if (isNaN(numericAmount) || numericAmount <= 0) {
@@ -71,7 +67,6 @@ const Bankroll = () => {
     sendTransactionRequest("deposit", numericAmount);
   };
 
-  // Handle withdrawing money
   const handleWithdrawMoney = () => {
     const numericAmount = parseFloat(amount);
     if (isNaN(numericAmount) || numericAmount <= 0) {
