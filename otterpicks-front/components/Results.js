@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, FlatList, StyleSheet, Button } from "react-native";
+import { View, Text, FlatList, StyleSheet, Button, ScrollView } from "react-native";
 import { UserContext } from "./UserContext";
 
 const Results = () => {
@@ -129,12 +129,12 @@ const Results = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={{ height: 600 }}>
       <Text style={styles.title}>Results</Text>
 
       <Text style={styles.sectionTitle}>Current Bets</Text>
       {currentBets.length > 0 ? (
-        <FlatList
+        <FlatList style={{ height: 600 }}
           data={currentBets}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderActiveBetItem}
@@ -145,7 +145,7 @@ const Results = () => {
 
       <Text style={styles.sectionTitle}>Past Bets</Text>
       {pastBets.length > 0 ? (
-        <FlatList
+        <FlatList style={{ height: 600 }}
           data={pastBets}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderPastBetItem}
@@ -153,7 +153,7 @@ const Results = () => {
       ) : (
         <Text style={styles.noBets}>No past bets</Text>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
