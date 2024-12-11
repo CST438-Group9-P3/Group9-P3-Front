@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#0093e9', // Ocean blue background
+    backgroundColor: '#0093e9', 
   },
   title: {
     fontSize: 32,

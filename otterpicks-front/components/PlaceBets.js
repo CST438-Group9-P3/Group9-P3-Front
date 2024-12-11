@@ -19,9 +19,9 @@ const PlaceBets = () => {
   const [targetValue, setTargetValue] = useState(0);
   const [playerValue, setPlayerValue] = useState(0);
 
-  const BASE_URL = "https://otterpicks-bbe3292b038b.herokuapp.com"; // Database URL
+  const BASE_URL = "https://otterpicks-bbe3292b038b.herokuapp.com";
   
-  useEffect(() => { // Gets CSUMB players from DB
+  useEffect(() => { 
     const fetchAthletes = async () => {
       try {
         const response = await fetch(`${BASE_URL}/players`); 
@@ -48,7 +48,6 @@ const PlaceBets = () => {
       fetchAthletes();
     }, []);
 
-  // Create a pick
   const createPick = async (userId, playerId, selection, stake, targetValue, playerValue, timestamp) => {
     const hasSufficientFunds = handleBetWithdrawMoney(stake); // checks if there are sufficient funds
 
@@ -59,7 +58,7 @@ const PlaceBets = () => {
     }
 
     const apiUrl = `${BASE_URL}/createPick?userId=${userId}&playerId=${playerId}&selection=${selection}&stake=${stake}&targetValue=${targetValue}&playerValue=${playerValue}&timestamp=${timestamp}`;
-    console.log("API URL:", apiUrl); // Logging the API URL to verify it is correct
+    console.log("API URL:", apiUrl);
 
     try {
       const response = await fetch(apiUrl, {
@@ -86,7 +85,6 @@ const PlaceBets = () => {
 
   const toggleBetSelection = (athlete) => {
     if (selectedAthlete === athlete.id) {
-      // Deselect if the same athlete is clicked again
       setSelectedAthlete(null);
       setPlayerId(null);
       setTargetValue(null);
@@ -98,7 +96,6 @@ const PlaceBets = () => {
       delete updatedBetAmounts[athlete.id];
       setBetAmounts(updatedBetAmounts);
     } else {
-      // Select a new athlete, deselecting any previous one
       setSelectedAthlete(athlete.id);
       setPlayerId(athlete.id);
       setTargetValue(athlete.target);
@@ -111,29 +108,27 @@ const PlaceBets = () => {
     if (selectedAthlete == null) {
       Alert.alert('No Bets Selected', 'Please select at least one bet to place.');
     } else {
-      setShowModal(true); // Show modal to confirm bet
+      setShowModal(true); 
     }
   };
 
-  const handleBetTypeSelection = (betType) => { // checks if it is Over or Under
+  const handleBetTypeSelection = (betType) => { 
     setSelection(betType);
     setSelectedBetType(betType);
   };
 
-  const handleBetAmountChange = (amount) => { // Confirms you are betting money
+  const handleBetAmountChange = (amount) => { 
     if(amount > 0){
       setStake(amount);
     }
   };
  
-    // Function to handle the transaction request
   const sendTransactionRequest = async (type, numericAmount) => {
-    const timestamp = new Date().toISOString().split("T")[0]; // Format current date as YYYY-MM-DD
+    const timestamp = new Date().toISOString().split("T")[0]; 
   
-    // Construct the API URL with query parameters
     const apiUrl = `${BASE_URL}/transaction?userId=${userId}&type=${type}&amount=${numericAmount}&timestamp=${timestamp}`;
   
-    console.log("API URL:", apiUrl); // Log the API URL to verify it is correct
+    console.log("API URL:", apiUrl); 
   
     try {
       const response = await fetch(apiUrl, {
@@ -144,17 +139,17 @@ const PlaceBets = () => {
         throw new Error(`Transaction failed with status ${response.status}`);
       }
   
-      const data = await response.json(); // Assume backend returns updated balance
+      const data = await response.json(); 
       console.log(data);
-      setBalance(data.user.account_balance); // Update balance based on the response
-      setAmount(""); // Clear the input
+      setBalance(data.user.account_balance); 
+      setAmount(""); 
       console.log("Transaction was successful, showing alert...");
       } catch (error) {
         console.error(`Error during ${type}:`, error);
       }
     };
     
-  const handleBetWithdrawMoney = (stake) => { // removes money from your account 
+  const handleBetWithdrawMoney = (stake) => { 
     const numericAmount = parseFloat(stake);
     if (isNaN(numericAmount) || numericAmount <= 0) {
       alert("Invalid Input", "Please enter a valid amount to withdraw.");
@@ -175,7 +170,7 @@ const PlaceBets = () => {
       <TouchableOpacity
       style={[
         styles.athleteCard,
-        selectedAthlete === item.id && styles.selectedCard, // Check against single selectedAthlete
+        selectedAthlete === item.id && styles.selectedCard, 
       ]}
       onPress={() => toggleBetSelection(item)}
       >
