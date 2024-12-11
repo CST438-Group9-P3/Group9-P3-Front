@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, FlatList, Button, StyleSheet, TouchableOpacity, Alert, Modal, TextInput, Image } from 'react-native';
+import { View, Text, FlatList, Button, StyleSheet, TouchableOpacity, Alert, Modal, TextInput, Image, ScrollView } from 'react-native';
 import { UserContext } from "./UserContext";
 import { format } from 'date-fns';
 
@@ -199,7 +199,7 @@ const PlaceBets = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={{ height: 600 }}>
       <Text style={styles.header}>Place Your Bets</Text>
       <FlatList
         data={athletesData}
@@ -273,7 +273,7 @@ const PlaceBets = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 
