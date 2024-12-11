@@ -63,7 +63,7 @@ const Admin = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Admin: Manage Picks</Text>
       {picks.length > 0 ? (
-        <FlatList
+        <FlatList style={{ height: 600 }}
           data={picks}
           keyExtractor={(item) => item.pick_id.toString()} 
           renderItem={renderPickItem}

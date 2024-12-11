@@ -14,6 +14,7 @@ const Login = ({ navigation }) => {
     setIsDarkMode(!isDarkMode);
   };
 
+
   useEffect(() => {
     const loadGoogleScript = () => {
       const script = document.createElement("script");

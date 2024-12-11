@@ -12,6 +12,7 @@ const Dashboard = ({ onLogout, navigation }) => {
 
   const currentStyles = isDarkMode ? darkStyles : lightStyles;
 
+
   const adminUserIds = [4, 5];
 
   return (
@@ -54,7 +55,17 @@ const Dashboard = ({ onLogout, navigation }) => {
       </TouchableOpacity>
 
 
-      {adminUserIds.includes(userId) && (
+    
+
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => navigation.navigate('Results')}
+      >
+        <Text style={styles.sectionTitle}>Recent Results</Text>
+        <Text style={styles.sectionContent}>Check out the latest game results here.</Text>
+      </TouchableOpacity>
+
+  {adminUserIds.includes(userId) && (
         <TouchableOpacity
           style={currentStyles.section}
           onPress={() => navigation.navigate('Admin')}
@@ -64,11 +75,6 @@ const Dashboard = ({ onLogout, navigation }) => {
         </TouchableOpacity>
       )}
 
-      
-      {/* Log Out Button */}
-      <View style={currentStyles.logoutButtonContainer}>
-        <Button title="Log Out" color={isDarkMode ? "#888" : "#444"} onPress={onLogout} />
-      </View>
     </View>
   );
 };
