@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { UserContext } from "./UserContext";
-import { View, Text, StyleSheet, Image, TouchableOpacity, Button } from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView, Button, useWindowDimensions, SafeAreaView} from "react-native";
 import logo from "../assets/logo.png";
 
 const Login = ({ navigation }) => {
@@ -9,11 +9,15 @@ const Login = ({ navigation }) => {
   const { setUserId, setBalance, setUsername } = useContext(UserContext);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const signInButtonRef = useRef(null);
+  const { width } = useWindowDimensions(); // Get the screen width dynamically
+
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
+  const currentStyles = isDarkMode ? darkStyles : lightStyles;
 
+  const logoSize = width * 0.3; // Adjust size as 40% of screen width
 
   useEffect(() => {
     const loadGoogleScript = () => {
@@ -75,7 +79,6 @@ const Login = ({ navigation }) => {
     }
   };
 
-  const currentStyles = isDarkMode ? darkStyles : lightStyles;
 
 return (
   <View style={currentStyles.container}>
@@ -90,8 +93,12 @@ return (
 
     {/* Left Section */}
     <View style={currentStyles.left}>
-      <Image source={logo} style={currentStyles.logo} />
-      <Text style={currentStyles.title}>Welcome to Otter Picks</Text>
+    <Image
+          source={logo}
+          style={{ width: logoSize, height: logoSize, marginBottom: 20 }}
+          resizeMode="contain"
+        />
+        <Text style={currentStyles.title}>Welcome to Otter Picks</Text>
       <Text style={currentStyles.subtitle}>
         Your destination for all your Otter Athletics betting needs.
       </Text>
@@ -103,6 +110,7 @@ return (
       <View ref={signInButtonRef} style={currentStyles.signInButton}></View>
     </View>
   </View>
+
 );
 };
 
@@ -111,7 +119,7 @@ const lightStyles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     backgroundColor: "#ffffff",
-    padding: 20, // Added padding for overall layout consistency
+    padding: 20, 
   },
   themeToggle: {
     position: "absolute",
@@ -119,7 +127,7 @@ const lightStyles = StyleSheet.create({
     right: 20,
     padding: 5,
     zIndex: 1,
-    borderRadius: 10, // Rounded corners for a cleaner look
+    borderRadius: 10, 
     backgroundColor: "#f8f8f8",
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -137,11 +145,6 @@ const lightStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-  },
-  logo: {
-    width: 450, // Reduced size for a better fit
-    height: 450,
-    marginBottom: 30,
   },
   title: {
     fontSize: 40, // Reduced size for better hierarchy
@@ -198,11 +201,6 @@ const darkStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-  },
-  logo: {
-    width: 450, // Matches light mode for consistency
-    height: 450,
-    marginBottom: 30,
   },
   title: {
     fontSize: 40,

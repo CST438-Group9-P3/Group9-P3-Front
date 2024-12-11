@@ -194,7 +194,7 @@ const PlaceBets = () => {
   };
 
   return (
-    <ScrollView style={{ height: 600 }}>
+    <ScrollView style={{ height: 600, backgroundColor: '#1a1a27'}}>
       <Text style={styles.header}>Place Your Bets</Text>
       <FlatList
         data={athletesData}
@@ -275,13 +275,13 @@ const PlaceBets = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f4f4',
+    backgroundColor: '#1a1a27', // Dark background
     padding: 16,
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#003f5c',
+    color: '#ffffff', // Bright header text
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -290,34 +290,34 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   athleteCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#2c2c3d', // Slightly lighter card background
     padding: 16,
     marginVertical: 8,
     borderRadius: 8,
-    borderColor: '#cccccc',
+    borderColor: '#444', // Subtle border
     borderWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   selectedCard: {
-    backgroundColor: '#d1e7ff',
+    backgroundColor: '#3a4b63', // Highlighted card background
     borderColor: '#0077b6',
   },
   athleteName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#003f5c',
+    color: '#ffffff', // Bright text for readability
     flex: 1,
   },
   athleteLine: {
     fontSize: 16,
-    color: '#0077b6',
+    color: '#0077b6', // Accent color
     marginVertical: 4,
   },
   athleteTeam: {
     fontSize: 14,
-    color: '#555555',
+    color: '#bbbbbb', // Softer text for secondary info
   },
   betOptions: {
     flexDirection: 'row',
@@ -331,12 +331,14 @@ const styles = StyleSheet.create({
   },
   betAmountInput: {
     borderWidth: 1,
-    borderColor: '#cccccc',
+    borderColor: '#555555', // Matches card border
     borderRadius: 5,
     padding: 5,
     marginLeft: 10,
     width: 80,
     textAlign: 'center',
+    color: '#ffffff', // Text color for input
+    backgroundColor: '#1a1a27', // Matches container background
   },
   confirmButtonContainer: {
     marginTop: 20,
@@ -344,18 +346,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   selectedAthleteContainer: {
-    backgroundColor: "#0077b6",
+    backgroundColor: "#0077b6", // Highlight color
   },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(26, 26, 39, 0.9)', // Semi-transparent dark overlay
   },
   modalContainer: {
     width: '80%',
     padding: 20,
-    backgroundColor: 'white',
+    backgroundColor: '#2c2c3d', // Matches card background
     borderRadius: 10,
   },
   modalHeader: {
@@ -363,6 +365,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+    color: '#ffffff', // Bright text for headers
   },
   modalBet: {
     marginBottom: 10,
@@ -371,22 +374,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 10,
     fontStyle: 'italic',
-    color: '#555',
+    color: '#bbbbbb', // Softer text for subtle emphasis
   },
   athleteImage: {
     width: 50,
     height: 50,
-    borderRadius: 25, 
-    marginRight: 10, 
+    borderRadius: 25,
+    marginRight: 10,
   },
-    athleteInfo: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
+  athleteInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   info: {
     flexDirection: 'column',
-    paddingLeft: 20
-  }
+    paddingLeft: 20,
+  },
 });
 
 export default PlaceBets;

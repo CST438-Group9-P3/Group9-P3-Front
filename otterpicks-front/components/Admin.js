@@ -79,16 +79,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f3f4f6",
+    backgroundColor: "#1a1a27",
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
+    color: '#ffffff'
   },
   pickItem: {
-    backgroundColor: "#fff",
+    backgroundColor: "#34344a",
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
@@ -101,11 +102,11 @@ const styles = StyleSheet.create({
   pickText: {
     fontSize: 16,
     marginBottom: 5,
-    color: "#333",
+    color: "#ffffff",
   },
   noPicks: {
     fontSize: 18,
-    color: "#999",
+    color: "#ffffff",
     textAlign: "center",
   },
 });

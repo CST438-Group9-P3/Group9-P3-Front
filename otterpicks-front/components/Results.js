@@ -122,14 +122,14 @@ const Results = () => {
     <Text style={styles.bet}>Line: {item.playerStats}</Text>
     <Text style={styles.bet}>Selection: {item.selection}</Text>
     <Text style={styles.bet}>Stake: {item.stake}</Text>
-    <Text style={styles.result}>Status: {item.status}</Text>
+    <Text style={styles.bet}>Status: {item.status}</Text>
     <Text style={styles.result}>Actual: {item.Actual}</Text>
     <Text style={styles.result}>Result: {item.result}</Text>
   </View>
   );
 
   return (
-    <ScrollView style={{ height: 600 }}>
+    <ScrollView style={{ height: 600, backgroundColor: '#1a1a27' }}>
       <Text style={styles.title}>Results</Text>
 
       <Text style={styles.sectionTitle}>Current Bets</Text>
@@ -161,19 +161,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f3f4f6",
+    backgroundColor: '#1a1a27',
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#333",
+    color: "#ffffff",
     marginBottom: 20,
     textAlign: "center",
   },
   sectionTitle: {
     fontSize: 22,
     fontWeight: "600",
-    color: "#555",
+    color: "#ffffff",
     marginVertical: 10,
   },
   noBets: {
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   betItem: {
-    // backgroundColor: "#fff",
+     backgroundColor: "#34344a",
     padding: 15,
     marginVertical: 8,
     borderRadius: 8,
@@ -196,11 +196,11 @@ const styles = StyleSheet.create({
   match: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#333",
+    color: "#ffffff",
   },
   bet: {
     fontSize: 16,
-    color: "#555",
+    color: "white",
   },
   result: {
     fontSize: 16,

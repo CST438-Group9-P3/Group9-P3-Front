@@ -55,16 +55,6 @@ const Dashboard = ({ onLogout, navigation }) => {
       </TouchableOpacity>
 
 
-    
-
-      <TouchableOpacity
-        style={styles.section}
-        onPress={() => navigation.navigate('Results')}
-      >
-        <Text style={styles.sectionTitle}>Recent Results</Text>
-        <Text style={styles.sectionContent}>Check out the latest game results here.</Text>
-      </TouchableOpacity>
-
   {adminUserIds.includes(userId) && (
         <TouchableOpacity
           style={currentStyles.section}
